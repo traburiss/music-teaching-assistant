@@ -14,4 +14,6 @@ export default {
   'home.training.vocal.resonance.subtitle': '共鸣融合到发声里',
   'home.training.vocal.resonance.desc':
     '通过元音咬字练习，更好的将共鸣融合到歌曲咬字里面',
+  'home.tools.metronome.subtitle': '专业节拍器',
+  'home.tools.metronome.desc': '精确的节拍与视觉辅助，支持多种音色和重音设置',
 };

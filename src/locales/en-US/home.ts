@@ -16,4 +16,7 @@ export default {
   'home.training.vocal.resonance.subtitle': 'Integrating Resonance into Phonation',
   'home.training.vocal.resonance.desc':
     'Through vowel articulation practice, better integrate resonance into song articulation.',
+  'home.tools.metronome.subtitle': 'Professional Metronome',
+  'home.tools.metronome.desc':
+    'Precise beats with visual aids, supports multiple sound types and accent settings.',
 };

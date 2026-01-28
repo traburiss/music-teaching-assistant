@@ -1,0 +1,245 @@
+:root {
+  --metronome-primary: #1890ff;
+  --metronome-accent: #ff4d4f;
+  --glass-bg: rgba(255, 255, 255, 70%);
+  --glass-border: rgba(255, 255, 255, 30%);
+  --text-main: #2c3e50;
+  --text-secondary: #7f8c8d;
+}
+
+.metronomePage {
+  height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.visualLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.indicatorSection {
+  height: 20%; /* Re-proportioned */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.graphicSection {
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centered body */
+  position: relative;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.graphicIdle {
+  filter: blur(4px); /* Less aggressive blur */
+  opacity: 0.6;
+  transform: scale(0.95);
+}
+
+.graphicRunning {
+  filter: blur(0);
+  opacity: 1;
+  transform: scale(1);
+}
+
+.metronomeContainerModern {
+  position: relative;
+  width: min(300px, 60vw);
+  height: min(400px, 80vh);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.metronomeSvg {
+  width: 100%;
+  height: 100%;
+  color: #34495e;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 10%));
+}
+
+.metronomeOutline {
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.pendulumModern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+}
+
+.stickModern {
+  position: absolute;
+  bottom: 12%; /* Anchor to pivot point */
+  width: 3px;
+  height: 70%;
+  background: linear-gradient(180deg, var(--metronome-primary), #bdc3c7);
+  border-radius: 2px;
+  transform-origin: 50% 100%;
+  box-shadow: 0 0 10px rgba(24, 144, 255, 20%);
+}
+
+.weightModern {
+  width: 16px;
+  height: 22px;
+  background: var(--metronome-primary);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 20%);
+  border: 1px solid rgba(255, 255, 255, 20%);
+}
+
+/* Controls Layer Premium */
+.controlsLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.topPlaceholder {
+  height: 20%;
+  pointer-events: none;
+}
+
+.bpmControlSection {
+  height: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease;
+}
+
+.selectionSection {
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  transition: all 0.5s ease;
+}
+
+.actionSection {
+  height: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glassCard {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 5%);
+}
+
+.hiddenControls {
+  opacity: 0;
+  pointer-events: none !important;
+  transform: scale(0.9) translateY(20px);
+}
+
+/* BPM Complex Control */
+.bpmDisplayWrapper {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.bpmBigText {
+  font-size: min(120px, 15vw);
+  font-weight: 200;
+  font-family:
+    Inter,
+    -apple-system,
+    sans-serif;
+  color: var(--metronome-primary);
+  min-width: 220px;
+  text-align: center;
+  line-height: 1;
+  letter-spacing: -4px;
+  text-shadow: 0 5px 15px rgba(24, 144, 255, 10%);
+}
+
+.bpmStepBtns {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bpmSliderFull {
+  width: min(500px, 80%);
+}
+
+/* Beat Indicator Refinement */
+.beatIndicatorBox {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 95%;
+}
+
+.beatDotMini {
+  width: min(36px, 6vw);
+  height: min(36px, 6vw);
+  border-radius: 12px; /* Smoother squircle */
+  background: rgba(255, 255, 255, 80%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #bdc3c7;
+  border: 1px solid rgba(0, 0, 0, 5%);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.activeDotMini {
+  background: var(--metronome-primary);
+  color: #fff;
+  transform: scale(1.2);
+  box-shadow: 0 10px 20px rgba(24, 144, 255, 30%);
+  border-color: var(--metronome-primary);
+}
+
+.accentDotMini {
+  border: 2px solid var(--metronome-accent);
+}
+
+.activeAccentDotMini {
+  background: var(--metronome-accent);
+  box-shadow: 0 10px 20px rgba(255, 77, 79, 30%);
+  border-color: var(--metronome-accent);
+}

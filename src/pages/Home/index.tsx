@@ -1,5 +1,6 @@
 import {
   AudioOutlined,
+  ClockCircleOutlined,
   CustomerServiceOutlined,
   SettingOutlined,
   SoundOutlined,
@@ -175,6 +176,39 @@ const HomePage: React.FC = () => {
               {intl.formatMessage({
                 id: 'home.training.vocal.range-extension.desc',
               })}
+            </div>
+          </div>
+        </ProCard>
+      </ProCard>
+
+      <ProCard
+        ghost
+        gutter={[16, 16]}
+        wrap
+        title={intl.formatMessage({ id: 'menu.tools' })}
+        style={{ marginBlockStart: 24 }}
+      >
+        <ProCard
+          colSpan={DEFAULT_COL_SPAN}
+          layout="center"
+          bordered
+          hoverable
+          onClick={() => {
+            history.push('/tools/metronome');
+          }}
+          title={
+            <div className="flex items-center gap-2">
+              <ClockCircleOutlined className="text-cyan-500" />
+              <span>{intl.formatMessage({ id: 'menu.tools.metronome' })}</span>
+            </div>
+          }
+        >
+          <div className="text-gray-500 text-center py-4">
+            <div>
+              {intl.formatMessage({ id: 'home.tools.metronome.subtitle' })}
+            </div>
+            <div className="mt-2 text-xs">
+              {intl.formatMessage({ id: 'home.tools.metronome.desc' })}
             </div>
           </div>
         </ProCard>

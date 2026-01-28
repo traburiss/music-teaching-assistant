@@ -76,6 +76,20 @@ export default defineConfig({
       ],
     },
     {
+      title: 'menu.tools',
+      icon: 'ToolOutlined',
+      key: 'menu.tools',
+      routes: [
+        {
+          title: 'menu.tools.metronome',
+          path: '/tools/metronome',
+          component: './Tools/Metronome',
+          key: 'menu.tools.metronome',
+          icon: 'ClockCircleOutlined',
+        },
+      ],
+    },
+    {
       title: 'menu.settings',
       path: '/settings',
       icon: 'SettingOutlined',
