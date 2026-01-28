@@ -1,0 +1,96 @@
+@layer components {
+  .bpmControlSection {
+    height: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+    width: 100%;
+
+    .glassCard {
+      background: var(--glass-bg, rgba(255, 255, 255, 70%));
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border, rgba(255, 255, 255, 30%));
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 5%);
+      display: flex;
+      align-items: center;
+
+      /* Vertical layout for BPM */
+      flex-direction: column;
+      padding: 20px 40px;
+      gap: 20px;
+    }
+  }
+
+  .hiddenControls {
+    opacity: 0;
+    pointer-events: none !important;
+    transform: scale(0.9) translateY(20px);
+  }
+
+  .bpmDisplayWrapper {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .bpmBigText {
+    font-size: min(120px, 15vw);
+    font-weight: 200;
+    font-family:
+      Inter,
+      -apple-system,
+      sans-serif;
+    color: var(--metronome-primary, #1890ff);
+    min-width: 220px;
+    text-align: center;
+    line-height: 1;
+    letter-spacing: -4px;
+    text-shadow: 0 5px 15px rgba(24, 144, 255, 10%);
+  }
+
+  .bpmStepBtns {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .bpmSliderFull {
+    width: min(500px, 80%);
+    max-width: 100%;
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .bpmControlSection {
+      height: 30%;
+
+      .glassCard {
+        padding: 5px 10px;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: 16px;
+        width: 95%;
+      }
+    }
+
+    .bpmBigText {
+      font-size: 48px;
+      min-width: 100px;
+      letter-spacing: -2px;
+    }
+
+    .bpmDisplayWrapper {
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .bpmSliderFull {
+      width: 90%;
+    }
+  }
+}

@@ -1,245 +1,278 @@
-:root {
-  --metronome-primary: #1890ff;
-  --metronome-accent: #ff4d4f;
-  --glass-bg: rgba(255, 255, 255, 70%);
-  --glass-border: rgba(255, 255, 255, 30%);
-  --text-main: #2c3e50;
-  --text-secondary: #7f8c8d;
-}
+@import '@/styles/mobile.less';
 
-.metronomePage {
-  height: calc(100vh - 120px);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-  background: radial-gradient(circle at center, #f8f9fa 0%, #e9ecef 100%);
-}
+@layer components {
+  :root {
+    --metronome-primary: #1890ff;
+    --metronome-accent: #ff4d4f;
+    --glass-bg: rgba(255, 255, 255, 70%);
+    --glass-border: rgba(255, 255, 255, 30%);
+    --text-main: #2c3e50;
+    --text-secondary: #7f8c8d;
+    --metronome-accent-blue: var(
+      --metronome-primary
+    ); /* Use primary blue for accent */
 
-.visualLayer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  z-index: 1;
-}
+    --metronome-light-blue: #91d5ff; /* Lighter, brighter blue for standard beats */
+  }
 
-.indicatorSection {
-  height: 20%; /* Re-proportioned */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
+  .metronomePage {
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: #fff; /* Changed to white as requested */
+  }
 
-.graphicSection {
-  height: 80%;
-  display: flex;
-  justify-content: center;
-  align-items: center; /* Centered body */
-  position: relative;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  .visualLayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+  }
 
-.graphicIdle {
-  filter: blur(4px); /* Less aggressive blur */
-  opacity: 0.6;
-  transform: scale(0.95);
-}
+  .indicatorSection {
+    flex: 0 0 25%; /* Fixed at 1/4 of visual area */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+  }
 
-.graphicRunning {
-  filter: blur(0);
-  opacity: 1;
-  transform: scale(1);
-}
+  .graphicSection {
+    flex: 1; /* Occupy remaining space below indicators */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-.metronomeContainerModern {
-  position: relative;
-  width: min(300px, 60vw);
-  height: min(400px, 80vh);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .graphicIdle {
+    filter: blur(4px);
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
 
-.metronomeSvg {
-  width: 100%;
-  height: 100%;
-  color: #34495e;
-  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 10%));
-}
+  .graphicRunning {
+    filter: blur(0);
+    opacity: 1;
+    transform: scale(1);
+  }
 
-.metronomeOutline {
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
+  .swingingModern {
+    animation: swinging-modern ease-in-out infinite alternate;
+    transform-origin: 50% 80%; /* Pivot point approximately at bottom circle */
+  }
 
-.pendulumModern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  display: flex;
-  justify-content: center;
-}
+  @keyframes swinging-modern {
+    from {
+      transform: rotate(-30deg);
+    }
 
-.stickModern {
-  position: absolute;
-  bottom: 12%; /* Anchor to pivot point */
-  width: 3px;
-  height: 70%;
-  background: linear-gradient(180deg, var(--metronome-primary), #bdc3c7);
-  border-radius: 2px;
-  transform-origin: 50% 100%;
-  box-shadow: 0 0 10px rgba(24, 144, 255, 20%);
-}
+    to {
+      transform: rotate(30deg);
+    }
+  }
 
-.weightModern {
-  width: 16px;
-  height: 22px;
-  background: var(--metronome-primary);
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 2px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 20%);
-  border: 1px solid rgba(255, 255, 255, 20%);
-}
+  .metronomeContainerModern {
+    position: relative;
 
-/* Controls Layer Premium */
-.controlsLayer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-}
+    /* Lock aspect ratio to match SVG (200x300) so that 20% bottom aligns with cy=240 */
+    aspect-ratio: 2 / 3;
 
-.topPlaceholder {
-  height: 20%;
-  pointer-events: none;
-}
+    /* Priority: Maximize Height (User request) */
+    height: 100%;
+    width: auto;
 
-.bpmControlSection {
-  height: 30%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.5s ease;
-}
+    /* Safety: Prevent horizontal overflow on narrow screens */
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-.selectionSection {
-  height: 30%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-  transition: all 0.5s ease;
-}
+  .metronomeSvg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    color: #34495e;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 10%));
+  }
 
-.actionSection {
-  height: 20%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .metronomeOutline {
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+  }
 
-.glassCard {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 5%);
-}
+  .pendulumModern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+  }
 
-.hiddenControls {
-  opacity: 0;
-  pointer-events: none !important;
-  transform: scale(0.9) translateY(20px);
-}
+  .stickModern {
+    position: absolute;
+    bottom: 20%; /* Adjusted to match circle pivot cy=240 in 300 height SVG */
+    width: 4px;
+    height: 75%;
+    background: linear-gradient(180deg, var(--metronome-primary), #bdc3c7);
+    border-radius: 2px;
+    transform-origin: 50% 100%;
+    box-shadow: 0 0 10px rgba(24, 144, 255, 20%);
+  }
 
-/* BPM Complex Control */
-.bpmDisplayWrapper {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  margin-bottom: 24px;
-}
+  .weightModern {
+    width: 16px;
+    height: 22px;
+    background: var(--metronome-primary);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 20%);
+    border: 1px solid rgba(255, 255, 255, 20%);
+  }
 
-.bpmBigText {
-  font-size: min(120px, 15vw);
-  font-weight: 200;
-  font-family:
-    Inter,
-    -apple-system,
-    sans-serif;
-  color: var(--metronome-primary);
-  min-width: 220px;
-  text-align: center;
-  line-height: 1;
-  letter-spacing: -4px;
-  text-shadow: 0 5px 15px rgba(24, 144, 255, 10%);
-}
+  /* Controls Layer Premium */
+  .controlsLayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+  }
 
-.bpmStepBtns {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+  .topPlaceholder {
+    height: 25%;
+    pointer-events: none;
+  }
 
-.bpmSliderFull {
-  width: min(500px, 80%);
-}
+  .selectionSection {
+    height: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    transition: all 0.5s ease;
+    padding: 0 20px;
+  }
 
-/* Beat Indicator Refinement */
-.beatIndicatorBox {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 95%;
-}
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .topPlaceholder {
+      height: 20%;
+    }
 
-.beatDotMini {
-  width: min(36px, 6vw);
-  height: min(36px, 6vw);
-  border-radius: 12px; /* Smoother squircle */
-  background: rgba(255, 255, 255, 80%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: #bdc3c7;
-  border: 1px solid rgba(0, 0, 0, 5%);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+    .selectionSection {
+      height: 35%;
+      padding: 0 5px;
+      align-items: flex-start; /* Align to top to avoid overlap with bottom */
+      padding-top: 10px;
+    }
 
-.activeDotMini {
-  background: var(--metronome-primary);
-  color: #fff;
-  transform: scale(1.2);
-  box-shadow: 0 10px 20px rgba(24, 144, 255, 30%);
-  border-color: var(--metronome-primary);
-}
+    .actionSection {
+      height: 15%;
+      padding-bottom: 20px;
+    }
+  }
 
-.accentDotMini {
-  border: 2px solid var(--metronome-accent);
-}
+  .actionSection {
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.activeAccentDotMini {
-  background: var(--metronome-accent);
-  box-shadow: 0 10px 20px rgba(255, 77, 79, 30%);
-  border-color: var(--metronome-accent);
+  .glassCard {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 5%);
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+  @media (max-width: 768px) {
+    .glassCard {
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 20px;
+      justify-content: center;
+      border-radius: 16px;
+      width: 95%;
+    }
+  }
+
+  .hiddenControls {
+    opacity: 0;
+    pointer-events: none !important;
+    transform: scale(0.9) translateY(20px);
+  }
+
+  /* BPM Complex Control */
+
+  /* Beat Indicator Refinement */
+  .beatIndicatorBox {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: space-evenly; /* Dispersed mode as requested */
+    width: 100%; /* Ensure it spans the width */
+    max-width: 95%;
+  }
+
+  .beatDotMini {
+    /* Dynamic width/height via inline styles */
+    border-radius: 50%; /* Perfect circle */
+    background: rgba(255, 255, 255, 80%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: #bdc3c7;
+    border: 1px solid var(--metronome-light-blue); /* Lighter border */
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    flex-shrink: 0;
+  }
+
+  .activeDotMini {
+    background: var(--metronome-light-blue);
+    color: #fff;
+    transform: scale(1.2);
+    box-shadow: 0 10px 20px rgba(145, 213, 255, 30%);
+    border-color: var(--metronome-light-blue);
+  }
+
+  .accentDotMini {
+    border: 2px solid var(--metronome-accent-blue);
+  }
+
+  .activeAccentDotMini {
+    background: var(--metronome-accent-blue);
+    box-shadow: 0 10px 20px rgba(24, 144, 255, 30%);
+    border-color: var(--metronome-accent-blue);
+  }
+
+  .playButton {
+    width: 90px;
+    height: 90px;
+    font-size: 36px;
+  }
 }

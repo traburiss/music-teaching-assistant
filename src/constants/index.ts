@@ -226,7 +226,9 @@ export const TONES_TRAINING_STORAGE_KEY = 'tones:training';
 export const TONES_IDENTIFICATION_STORAGE_KEY = 'tones:identification';
 export const VOCAL_MA_EXERCISE_STORAGE_KEY = 'vocal:ma-exercise';
 export const VOCAL_RESONANCE_EXERCISE_STORAGE_KEY = 'vocal:resonance';
-export const VOCAL_RANGE_EXTENSION_EXERCISE_STORAGE_KEY = 'vocal:range-extension';
+export const VOCAL_RANGE_EXTENSION_EXERCISE_STORAGE_KEY =
+  'vocal:range-extension';
+export const METRONOME_STORAGE_KEY = 'tools:metronome';
 
 export const CONFIG_kEY_LIST = [
   {
@@ -248,5 +250,9 @@ export const CONFIG_kEY_LIST = [
   {
     name: 'vocal.range-extension.title',
     key: VOCAL_RANGE_EXTENSION_EXERCISE_STORAGE_KEY,
+  },
+  {
+    name: 'menu.tools.metronome',
+    key: METRONOME_STORAGE_KEY,
   },
 ];

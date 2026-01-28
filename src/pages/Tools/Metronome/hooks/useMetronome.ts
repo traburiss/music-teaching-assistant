@@ -31,6 +31,7 @@ export const useMetronome = (initialState: MetronomeState) => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const nextNoteTimeRef = useRef<number>(0);
   const timerIDRef = useRef<number | null>(null);
+  const visualTimeoutRef = useRef<number | null>(null);
   const beatCountRef = useRef<number>(0); // Absolute beat counter including subdivisions
 
   // Lookahead settings
@@ -50,7 +51,12 @@ export const useMetronome = (initialState: MetronomeState) => {
   }, []);
 
   // Synthesis functions
-  const playSound = (time: number, isAccent: boolean, sound: SoundType) => {
+  const playSound = (
+    time: number,
+    isAccent: boolean,
+    sound: SoundType,
+    isSubdivision: boolean = false,
+  ) => {
     const ctx = audioContextRef.current;
     if (!ctx) return;
 
@@ -62,32 +68,38 @@ export const useMetronome = (initialState: MetronomeState) => {
 
     // Simple synthesis logic
     switch (sound) {
-      case 'mechanical':
+      case 'mechanical': {
         osc.type = 'square';
-        osc.frequency.setValueAtTime(isAccent ? 1200 : 800, time);
-        gainNode.gain.setValueAtTime(1, time);
+        const freq = isAccent ? 1200 : isSubdivision ? 600 : 800; // Lower pitch for subdivision
+        osc.frequency.setValueAtTime(freq, time);
+        gainNode.gain.setValueAtTime(isSubdivision ? 0.6 : 1, time); // Slightly softer
         gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
         osc.start(time);
         osc.stop(time + 0.05);
         break;
+      }
 
-      case 'woodblock':
+      case 'woodblock': {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(isAccent ? 1000 : 800, time);
-        gainNode.gain.setValueAtTime(1, time);
+        const freq = isAccent ? 1000 : isSubdivision ? 600 : 800;
+        osc.frequency.setValueAtTime(freq, time);
+        gainNode.gain.setValueAtTime(isSubdivision ? 0.7 : 1, time);
         gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
         osc.start(time);
         osc.stop(time + 0.1);
         break;
+      }
 
-      case 'claves':
+      case 'claves': {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(isAccent ? 2500 : 2000, time);
-        gainNode.gain.setValueAtTime(1, time);
+        const freq = isAccent ? 2500 : isSubdivision ? 1600 : 2000;
+        osc.frequency.setValueAtTime(freq, time);
+        gainNode.gain.setValueAtTime(isSubdivision ? 0.7 : 1, time);
         gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
         osc.start(time);
         osc.stop(time + 0.1);
         break;
+      }
 
       case 'snare': {
         // Noise burst for snare
@@ -103,12 +115,16 @@ export const useMetronome = (initialState: MetronomeState) => {
         // Filter
         const noiseFilter = ctx.createBiquadFilter();
         noiseFilter.type = 'highpass';
-        noiseFilter.frequency.value = 1000;
+        // Lower filter freq for "deeper" sound, or just standard ghost note
+        noiseFilter.frequency.value = isSubdivision ? 600 : 1000;
         noise.connect(noiseFilter);
         noiseFilter.connect(gainNode);
 
         // Envelope
-        gainNode.gain.setValueAtTime(isAccent ? 1 : 0.7, time);
+        gainNode.gain.setValueAtTime(
+          isAccent ? 1 : isSubdivision ? 0.4 : 0.7,
+          time,
+        );
         gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
 
         noise.start(time);
@@ -116,15 +132,20 @@ export const useMetronome = (initialState: MetronomeState) => {
         break;
       }
 
-      case 'kick':
+      case 'kick': {
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(150, time);
+        const startFreq = isSubdivision ? 100 : 150;
+        osc.frequency.setValueAtTime(startFreq, time);
         osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
-        gainNode.gain.setValueAtTime(isAccent ? 1 : 0.8, time);
+        gainNode.gain.setValueAtTime(
+          isAccent ? 1 : isSubdivision ? 0.6 : 0.8,
+          time,
+        );
         gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
         osc.start(time);
         osc.stop(time + 0.5);
         break;
+      }
 
       case 'hihat': {
         // High pass noise
@@ -138,11 +159,14 @@ export const useMetronome = (initialState: MetronomeState) => {
         hhNoise.buffer = hhBuffer;
         const hhFilter = ctx.createBiquadFilter();
         hhFilter.type = 'highpass';
-        hhFilter.frequency.value = 7000;
+        hhFilter.frequency.value = isSubdivision ? 4000 : 7000; // Lower shimmer
         hhNoise.connect(hhFilter);
         hhFilter.connect(gainNode);
 
-        gainNode.gain.setValueAtTime(isAccent ? 0.6 : 0.3, time);
+        gainNode.gain.setValueAtTime(
+          isAccent ? 0.6 : isSubdivision ? 0.15 : 0.3,
+          time,
+        );
         gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
         hhNoise.start(time);
         break;
@@ -167,35 +191,19 @@ export const useMetronome = (initialState: MetronomeState) => {
     const isDownbeat = currentSubdivision === 0;
     const isOnBeat = currentSubdivision % subdivision === 0;
 
-    // Determine if we should play sound
-    // We play on every subdivision, but emphasize beats
-    // Accent only on downbeat (1)
-
     let shouldAccent = false;
 
     if (isDownbeat && accent) {
       shouldAccent = true;
     }
 
-    // Play sound logic
-    // We play the main sound on beats
-    // For subdivisions, we might want a different sound or quieter?
-    // Current requirement: "每小节的细分数"
-    // Let's keep it simple: Primary sound on Beats, lighter (or same) on subdivision?
-    // Usually metronomes play: Tock (1) - tick - tick - tick...
-    // With subdivisions: Tock - sub - sub - tick - sub - sub...
-
     if (isOnBeat) {
-      // Main beat
+      // Main beat - standard sound
       playSound(nextNoteTimeRef.current, shouldAccent, soundType);
     } else {
-      // Subdivision
-      // Play a lighter version or different sound?
-      // For now, let's play a high-pitched 'mechanical' or just softer current sound for subdivision
-      // Re-using current sound but very quiet/high?
-      // Let's use 'hihat' or just softer mechanical for subdivisions to distinguish
+      // Subdivision - use same sound type but deeper/softer
       if (subdivision > 1) {
-        playSound(nextNoteTimeRef.current, false, 'hihat');
+        playSound(nextNoteTimeRef.current, false, soundType, true);
       }
     }
 
@@ -210,7 +218,7 @@ export const useMetronome = (initialState: MetronomeState) => {
 
     if (isOnBeat) {
       const beatNumber = Math.floor(currentSubdivision / subdivision) + 1;
-      setTimeout(() => {
+      visualTimeoutRef.current = window.setTimeout(() => {
         setCurrentBeat(beatNumber);
       }, timeToNote * 1000);
     }
@@ -242,8 +250,12 @@ export const useMetronome = (initialState: MetronomeState) => {
 
   const stop = useCallback(() => {
     setIsPlaying(false);
+    setCurrentBeat(0); // Reset visual indicator to "all off"
     if (timerIDRef.current) {
       window.clearTimeout(timerIDRef.current);
+    }
+    if (visualTimeoutRef.current) {
+      window.clearTimeout(visualTimeoutRef.current);
     }
   }, []);
 

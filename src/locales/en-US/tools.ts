@@ -15,8 +15,4 @@ export default {
   'tools.metronome.sound.hihat': 'Hi-Hat',
   'tools.metronome.start': 'Start',
   'tools.metronome.stop': 'Stop',
-  'tools.metronome.subdivision.1': '1',
-  'tools.metronome.subdivision.2': '2 (Eighths)',
-  'tools.metronome.subdivision.3': '3 (Triplets)',
-  'tools.metronome.subdivision.4': '4 (Sixteenths)',
 };

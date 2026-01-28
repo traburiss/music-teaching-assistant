@@ -5,7 +5,7 @@
   "scripts": {
     "build": "max build",
     "deploy": "max build && gh-pages -d dist",
-    "dev": "max dev",
+    "dev": "set CHECK_TIMEOUT=20 && max dev",
     "format": "prettier --cache --write .",
     "postinstall": "max setup",
     "prepare": "husky",

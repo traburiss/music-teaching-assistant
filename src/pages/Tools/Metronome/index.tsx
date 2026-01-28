@@ -1,27 +1,39 @@
-import {
-  CaretRightOutlined,
-  MinusOutlined,
-  PauseOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
+import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
+
+import { METRONOME_STORAGE_KEY } from '@/constants';
+import { getPageSettings, setPageSettings } from '@/utils/storage';
 import { PageContainer } from '@ant-design/pro-components';
 import { useIntl } from '@umijs/max';
-import { Button, Select, Slider, Space } from 'antd';
-import React, { useState } from 'react';
-import MetronomeVisual from './components/MetronomeVisual';
+import { Button, Select, Space, Switch } from 'antd';
+import React, { useEffect, useState } from 'react';
+import BeatIndicator from './components/BeatIndicator';
+import BpmControl from './components/BpmControl';
+import MetronomeBackdrop from './components/MetronomeBackdrop';
 import { SoundType, useMetronome } from './hooks/useMetronome';
-import styles from './index.less';
+import './index.less';
+
+const DEFAULT_SETTINGS = {
+  bpm: 100,
+  beatsPerMeasure: 4,
+  subdivision: 1,
+  accent: true,
+  soundType: 'mechanical' as SoundType,
+};
 
 const MetronomePage: React.FC = () => {
   const intl = useIntl();
 
-  const [settings, setSettings] = useState({
-    bpm: 100,
-    beatsPerMeasure: 4,
-    subdivision: 1,
-    accent: true,
-    soundType: 'mechanical' as SoundType,
-  });
+  const [settings, setSettings] = useState(() =>
+    getPageSettings(METRONOME_STORAGE_KEY, DEFAULT_SETTINGS),
+  );
+
+  useEffect(() => {
+    setPageSettings(
+      METRONOME_STORAGE_KEY,
+      settings,
+      intl.formatMessage({ id: 'menu.tools.metronome' }),
+    );
+  }, [settings, intl]);
 
   const { isPlaying, start, stop, currentBeat } = useMetronome(settings);
 
@@ -44,84 +56,32 @@ const MetronomePage: React.FC = () => {
         title: intl.formatMessage({ id: 'menu.tools.metronome' }),
       }}
     >
-      <div className={styles.metronomePage}>
-        {/* Background Visuals */}
-        <MetronomeVisual
-          bpm={settings.bpm}
-          isPlaying={isPlaying}
-          currentBeat={currentBeat}
-          beatsPerMeasure={settings.beatsPerMeasure}
-        />
+      <div className="metronomePage">
+        {/* Background Visuals Layer */}
+        <div className="visualLayer">
+          <BeatIndicator
+            currentBeat={currentBeat}
+            beatsPerMeasure={settings.beatsPerMeasure}
+          />
+          <MetronomeBackdrop bpm={settings.bpm} isPlaying={isPlaying} />
+        </div>
 
         {/* Foreground Controls */}
-        <div className={styles.controlsLayer}>
-          <div className={styles.topPlaceholder} />
+        <div className="controlsLayer">
+          <div className="topPlaceholder" />
 
           {/* BPM Section */}
-          <div
-            className={`${styles.bpmControlSection} ${isPlaying ? styles.hiddenControls : ''}`}
-          >
-            <div
-              className={`${styles.glassCard} flex flex-column items-center`}
-            >
-              <div className={styles.bpmDisplayWrapper}>
-                <div className={styles.bpmStepBtns}>
-                  <Button
-                    type="text"
-                    size="large"
-                    icon={<MinusOutlined />}
-                    onClick={() => updateBpm(settings.bpm - 5)}
-                  >
-                    -5
-                  </Button>
-                  <Button
-                    type="text"
-                    icon={<MinusOutlined />}
-                    onClick={() => updateBpm(settings.bpm - 1)}
-                  >
-                    -1
-                  </Button>
-                </div>
-
-                <div className={styles.bpmBigText}>{settings.bpm}</div>
-
-                <div className={styles.bpmStepBtns}>
-                  <Button
-                    type="text"
-                    size="large"
-                    icon={<PlusOutlined />}
-                    onClick={() => updateBpm(settings.bpm + 5)}
-                  >
-                    +5
-                  </Button>
-                  <Button
-                    type="text"
-                    icon={<PlusOutlined />}
-                    onClick={() => updateBpm(settings.bpm + 1)}
-                  >
-                    +1
-                  </Button>
-                </div>
-              </div>
-              <Slider
-                className={styles.bpmSliderFull}
-                min={20}
-                max={300}
-                value={settings.bpm}
-                onChange={updateBpm}
-                tooltip={{ open: false }}
-              />
-            </div>
-          </div>
+          <BpmControl
+            bpm={settings.bpm}
+            onChange={updateBpm}
+            visible={!isPlaying}
+          />
 
           {/* Config Section */}
           <div
-            className={`${styles.selectionSection} ${isPlaying ? styles.hiddenControls : ''}`}
+            className={`selectionSection ${isPlaying ? 'hiddenControls' : ''}`}
           >
-            <div
-              className={styles.glassCard}
-              style={{ padding: '20px 40px', display: 'flex', gap: '40px' }}
-            >
+            <div className="glassCard">
               <Space direction="vertical" align="center">
                 <span className="text-xs text-gray-400 uppercase tracking-widest">
                   {intl.formatMessage({
@@ -142,7 +102,24 @@ const MetronomePage: React.FC = () => {
                   style={{ width: 80 }}
                 />
               </Space>
-
+              <Space direction="vertical" align="center">
+                <span className="text-xs text-gray-400 uppercase tracking-widest">
+                  {intl.formatMessage({ id: 'tools.metronome.subdivision' })}
+                </span>
+                <Select
+                  bordered={false}
+                  className="text-lg font-bold"
+                  value={settings.subdivision}
+                  onChange={(v) =>
+                    setSettings((prev) => ({ ...prev, subdivision: v }))
+                  }
+                  options={[1, 2, 3, 4, 6, 8].map((val) => ({
+                    label: String(val),
+                    value: val,
+                  }))}
+                  style={{ width: 80 }}
+                />
+              </Space>
               <Space direction="vertical" align="center">
                 <span className="text-xs text-gray-400 uppercase tracking-widest">
                   {intl.formatMessage({ id: 'tools.metronome.sound-type' })}
@@ -177,67 +154,37 @@ const MetronomePage: React.FC = () => {
                   style={{ width: 140 }}
                 />
               </Space>
-
               <Space direction="vertical" align="center">
                 <span className="text-xs text-gray-400 uppercase tracking-widest">
-                  {intl.formatMessage({ id: 'tools.metronome.subdivision' })}
+                  {intl.formatMessage({ id: 'tools.metronome.accent' })}
                 </span>
-                <Select
-                  bordered={false}
-                  className="text-lg font-bold"
-                  value={settings.subdivision}
-                  onChange={(v) =>
-                    setSettings((prev) => ({ ...prev, subdivision: v }))
+                <Switch
+                  checked={settings.accent}
+                  onChange={(checked) =>
+                    setSettings((prev) => ({ ...prev, accent: checked }))
                   }
-                  options={[
-                    {
-                      label: intl.formatMessage({
-                        id: 'tools.metronome.subdivision.1',
-                      }),
-                      value: 1,
-                    },
-                    {
-                      label: intl.formatMessage({
-                        id: 'tools.metronome.subdivision.2',
-                      }),
-                      value: 2,
-                    },
-                    {
-                      label: intl.formatMessage({
-                        id: 'tools.metronome.subdivision.3',
-                      }),
-                      value: 3,
-                    },
-                    {
-                      label: intl.formatMessage({
-                        id: 'tools.metronome.subdivision.4',
-                      }),
-                      value: 4,
-                    },
-                  ]}
-                  style={{ width: 140 }}
+                  style={{ marginTop: 6 }}
                 />
               </Space>
             </div>
           </div>
 
           {/* Action Section */}
-          <div className={styles.actionSection}>
+          <div className="actionSection">
             <Button
               type="primary"
               shape="circle"
               onClick={togglePlay}
               icon={isPlaying ? <PauseOutlined /> : <CaretRightOutlined />}
+              className="playButton"
               style={{
                 width: 90,
                 height: 90,
                 fontSize: '36px',
                 boxShadow: isPlaying
-                  ? '0 10px 30px rgba(255, 77, 79, 0.4)'
+                  ? '0 10px 30px rgba(250, 140, 22, 0.4)'
                   : '0 10px 30px rgba(24, 144, 255, 0.4)',
-                background: isPlaying
-                  ? 'var(--metronome-accent)'
-                  : 'var(--metronome-primary)',
+                background: isPlaying ? '#fa8c16' : 'var(--metronome-primary)',
                 border: 'none',
               }}
             />
