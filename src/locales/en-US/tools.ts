@@ -15,4 +15,5 @@ export default {
   'tools.metronome.sound.hihat': 'Hi-Hat',
   'tools.metronome.start': 'Start',
   'tools.metronome.stop': 'Stop',
+  'tools.metronome.beats-bpms-section-history': 'History'
 };

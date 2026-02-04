@@ -63,6 +63,53 @@
     max-width: 100%;
   }
 
+  .topBpmsSection {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .topBpmsLabel {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .topBpmsList {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .topBpmChip {
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 40%);
+    border: 1px solid rgba(255, 255, 255, 50%);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+
+    &:hover {
+      background: rgba(255, 255, 255, 70%);
+      transform: translateY(-2px);
+    }
+
+    &.active {
+      background: var(--metronome-primary);
+      color: #fff;
+      border-color: var(--metronome-primary);
+      box-shadow: 0 4px 10px rgba(24, 144, 255, 30%);
+    }
+  }
+
   /* Mobile Responsiveness */
   @media (max-width: 768px) {
     .bpmControlSection {
@@ -91,6 +138,53 @@
 
     .bpmSliderFull {
       width: 90%;
+    }
+  }
+
+  /* Height Responsiveness */
+  @media (max-height: 900px) {
+    .bpmControlSection {
+      .glassCard {
+        padding: 5px 15px;
+        gap: 8px;
+        border-radius: 16px;
+      }
+    }
+
+    .bpmBigText {
+      font-size: 60px;
+      min-width: 120px;
+      letter-spacing: -2px;
+    }
+
+    .bpmDisplayWrapper {
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+
+    .bpmStepBtns {
+      gap: 4px;
+
+      .ant-btn {
+        height: 24px;
+        min-width: 24px;
+        padding: 0 4px;
+        font-size: 12px;
+      }
+    }
+
+    .topBpmsSection {
+      margin-top: 4px;
+      gap: 6px;
+    }
+
+    .topBpmChip {
+      padding: 2px 8px;
+      font-size: 12px;
+    }
+
+    .bpmSliderFull {
+      margin: 2px 0;
     }
   }
 }

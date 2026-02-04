@@ -15,4 +15,5 @@ export default {
   'tools.metronome.sound.hihat': '踩镲',
   'tools.metronome.start': '开始',
   'tools.metronome.stop': '停止',
+  'tools.metronome.beats-bpms-section-history': '常用'
 };

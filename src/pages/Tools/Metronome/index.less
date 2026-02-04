@@ -220,6 +220,62 @@
     }
   }
 
+  /* Height Responsiveness */
+  @media (max-height: 900px) {
+    .indicatorSection {
+      flex: 0 0 15%; /* Reduce visible top area */
+      padding: 5px 10px;
+    }
+
+    .topPlaceholder {
+      height: 15%; /* Give more space to controls */
+    }
+
+    .selectionSection {
+      height: 35%; /* Expand selection area */
+      padding-top: 5px;
+      align-items: flex-start;
+    }
+
+    .actionSection {
+      height: 25%; /* Expand action area */
+      padding-bottom: 10px;
+    }
+
+    .playButton {
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+    }
+
+    .beatIndicatorBox {
+      gap: 4px;
+      transform: scale(0.8);
+      transform-origin: center center;
+    }
+
+    /* Removed individual dot scaling to keep proportions correct with container scale */
+  }
+
+  @media (max-height: 500px) {
+    .indicatorSection {
+      display: none; /* Hide indicators on extremely short screens to save space */
+    }
+
+    .topPlaceholder {
+      height: 5%;
+    }
+
+    .selectionSection {
+      height: 50%;
+      align-items: center;
+    }
+
+    .actionSection {
+      height: 30%;
+    }
+  }
+
   .hiddenControls {
     opacity: 0;
     pointer-events: none !important;
